@@ -2,103 +2,123 @@
 <html lang="es">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>FinApp</title>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>"/>
+<script src="https://unpkg.com/tesseract.js@4/dist/tesseract.min.js"></script>
 <style>
-body{font-family:-apple-system,BlinkMacSystemFont;margin:0;background:#000;color:#0f0;display:flex;flex-direction:column;height:100vh}
-header{display:flex;justify-content:space-between;padding:10px}
-#sem{width:70px;height:70px;border-radius:50%;border:3px solid #0ff;margin:auto}
-.verde{background:#0f0}.ambar{background:#ff0}.rojo{background:#f00}
-.btn{font-size:1.8rem;padding:10px 20px;border:2px solid #0ff;background:transparent;color:#0ff;border-radius:10px;margin:8px}
-.num{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px}
-.num button{font-size:1.6rem;padding:18px;background:#222;color:#0f0;border:none}
-#amount{font-size:2rem;text-align:center;margin:6px}
-.hide{display:none}
+:root{
+  --bg:#f4f6fa;
+  --card:#ffffff;
+  --primary:#3478f6;
+  --green:#34c759;
+  --yellow:#ffcc00;
+  --red:#ff3b30;
+  --text:#1c1c1e;
+  --text-light:#8e8e93;
+  --shadow:0 2px 12px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;}
+body{margin:0;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100vh;-webkit-user-select:none;}
+header{background:var(--card);box-shadow:var(--shadow);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;font-size:17px;font-weight:600;}
+#saldo{font-size:20px;color:var(--primary);}
+#fecha{color:var(--text-light);font-size:14px;}
+main{flex:1;padding:20px 16px 80px;overflow-y:auto;}
+.card{background:var(--card);border-radius:16px;box-shadow:var(--shadow);padding:16px;margin-bottom:16px;}
+#sem{width:90px;height:90px;border-radius:50%;margin:0 auto 10px;border:4px solid var(--primary);}
+.verde{background:var(--green)!important;}.ambar{background:var(--yellow)!important;}.rojo{background:var(--red)!important;}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.prod{display:flex;flex-direction:column;align-items:center;padding:14px;border-radius:12px;background:var(--card);box-shadow:var(--shadow);}
+.prod-icon{font-size:32px;margin-bottom:6px;}
+.prod-name{font-size:14px;color:var(--text-light);}
+.prod-amt{font-size:18px;font-weight:600;color:var(--text);}
+.bot-bar{position:fixed;bottom:0;left:0;right:0;background:var(--card);box-shadow:var(--shadow);display:flex;justify-content:space-around;padding:8px 0;}
+.bot-bar button{background:none;border:none;font-size:28px;color:var(--text-light);flex:1;padding:8px;}
+.bot-bar button:active{color:var(--primary);}
+.num{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px 0;}
+.num button{font-size:24px;padding:18px;border:none;background:#e5e5ea;border-radius:12px;color:var(--text);}
+.btn-prim{background:var(--primary)!important;color:#fff!important;}
+.btn-sec{background:#e5e5ea!important;color:var(--text)!important;}
+.hide{display:none!important;}
+#amount{font-size:32px;text-align:center;margin:10px 0;letter-spacing:1px;}
+select{width:100%;font-size:16px;padding:10px;border-radius:10px;border:1px solid #c6c6c8;margin-bottom:10px;background:var(--card);}
+ul{list-style:none;padding:0;margin:0;}
+li{padding:10px;border-bottom:1px solid #e5e5ea;font-size:15px;display:flex;justify-content:space-between;}
+li:last-child{border:none;}
 </style>
 </head>
 <body>
-<header><span id="saldo">$0.00</span><span id="fecha"></span></header>
-<main>
-<div id="sem" class="rojo"></div>
-<h2 id="statusText">Cargando…</h2>
-<div style="display:flex;justify-content:center">
-<button class="btn" onclick="quick('gasto')">- Gasto</button>
-<button class="btn" onclick="quick('ingreso')">+ Ingreso</button>
-</div>
-<div id="teclado" class="hide">
-<div id="amount">$0</div>
-<div class="num">
-<button onclick="n('1')">1</button><button onclick="n('2')">2</button><button onclick="n('3')">3</button>
-<button onclick="n('4')">4</button><button onclick="n('5')">5</button><button onclick="n('6')">6</button>
-<button onclick="n('7')">7</button><button onclick="n('8')">8</button><button onclick="n('9')">9</button>
-<button onclick="n('c')">C</button><button onclick="n('0')">0</button><button onclick="n('.')">.</button>
-</div>
-<select id="cat"></select>
-<button class="btn" onclick="guardar()">Guardar</button>
-<button class="btn" onclick="cancelar()">Cancelar</button>
-</div>
+
+<header>
+  <div><span id="saldo">$0.00</span><br><span id="fecha"></span></div>
+  <div style="font-size:14px;color:var(--text-light)">FinApp</div>
+</header>
+
+<main id="vista">
+  <!-- 1. CUADRO SALUD -->
+  <div class="card" style="text-align:center">
+    <div id="sem"></div>
+    <div id="statusText" style="font-size:18px;font-weight:500">Cargando…</div>
+  </div>
+
+  <!-- 2. PRODUCTOS (RESUMEN RÁPIDO) -->
+  <div class="card">
+    <div class="grid" id="productos"></div>
+  </div>
+
+  <!-- 3. BOTONES PRINCIPALES -->
+  <div class="grid">
+    <button class="btn-prim" onclick="quick('gasto')">- Gasto</button>
+    <button class="btn-prim" onclick="quick('ingreso')">+ Ingreso</button>
+    <button class="btn-sec" onclick="fotoRecibo()">📷 Recibo</button>
+    <button class="btn-sec" onclick="verResumen()">📋 Resumen</button>
+  </div>
+
+  <!-- 4. TECLADO NUMÉRICO / FORM -->
+  <div id="teclado" class="hide card">
+    <div id="amount">$0</div>
+    <div class="num">
+      <button onclick="n('1')">1</button><button onclick="n('2')">2</button><button onclick="n('3')">3</button>
+      <button onclick="n('4')">4</button><button onclick="n('5')">5</button><button onclick="n('6')">6</button>
+      <button onclick="n('7')">7</button><button onclick="n('8')">8</button><button onclick="n('9')">9</button>
+      <button onclick="n('c')">C</button><button onclick="n('0')">0</button><button onclick="n('.')">.</button>
+    </div>
+    <select id="cat"></select>
+    <select id="medio">
+      <option value="">Medio (opcional)</option>
+      <option>Tarjeta-crédito</option><option>Débito</option><option>Cripto</option><option>Inversiones</option><option>Terrenos</option>
+    </select>
+    <div style="display:flex;gap:8px">
+      <button class="btn-prim" style="flex:1" onclick="guardar()">Guardar</button>
+      <button class="btn-sec" style="flex:1" onclick="cancelar()">Cancelar</button>
+    </div>
+  </div>
 </main>
+
+<!-- 5. BARRA INFERIOR -->
+<footer class="bot-bar">
+  <button onclick="location.reload()">🏠</button>
+  <button onclick="verResumen()">📋</button>
+  <button onclick="alert('Pronto más herramientas')">⚙️</button>
+</footer>
+
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz88_Sg6VGhu-5zf_yh3Mm58GSi3ygrAarWlDIS2QU13dPd-u82pij2U_La4Hr6lxp0hQ/exec'; // << PASO 2.5: cambia sólo esta por tu URL
+const medios = ['Tarjeta-crédito','Débito','Cripto','Inversiones','Terrenos'];
+const SCRIPT_URL = 'https://uguzman-lab.github.io/finapp/'; // << CAMBIA ESTA por tu URL real de Apps Script
 let modo = '', monto = '0', datos = [];
 
 window.onload = async () => {
   document.getElementById('fecha').textContent = new Date().toLocaleDateString('es-MX');
   await cargar();
   actualizarSemaforo();
+  pintaProductos();
 };
 
 async function cargar(){
   const r = await fetch(SCRIPT_URL + '?action=read');
-  datos = await r.json();
-  const ing = datos.filter(x => x.Tipo === 'ingreso').reduce((a, x) => a + parseFloat(x.Monto), 0);
-  const gas = datos.filter(x => x.Tipo === 'gasto').reduce((a, x) => a + parseFloat(x.Monto), 0);
-  document.getElementById('saldo').textContent = '$' + (ing - gas).toFixed(2);
-}
-
-function actualizarSemaforo(){
-  const ing = datos.filter(x => x.Tipo === 'ingreso' && esteMes(x.Fecha)).reduce((a, x) => a + parseFloat(x.Monto), 0);
-  const gas = datos.filter(x => x.Tipo === 'gasto' && esteMes(x.Fecha)).reduce((a, x) => a + parseFloat(x.Monto), 0);
-  const el = document.getElementById('sem'); el.className = '';
-  if (gas < ing * 0.8) { el.classList.add('verde'); document.getElementById('statusText').textContent = 'Saludable'; }
-  else if (gas < ing * 0.95) { el.classList.add('ambar'); document.getElementById('statusText').textContent = 'Cuidado'; }
-  else { el.classList.add('rojo'); document.getElementById('statusText').textContent = 'Crítico'; }
-}
-function esteMes(f) { const d = new Date(f); const hoy = new Date(); return d.getMonth() === hoy.getMonth() && d.getFullYear() === hoy.getFullYear(); }
-
-function quick(t) {
-  modo = t; monto = '0'; document.getElementById('amount').textContent = '$0';
-  const sel = document.getElementById('cat'); sel.innerHTML = '';
-  const cats = t === 'gasto' ? ['🍔 Alimentos','🚗 Transporte','🏠 Casa','🎉 Salidas','💊 Salud','📱 Tecnología','🛍️ Otros']
-                             : ['💰 Nómina','🎁 Regalo','📈 Intereses','↩️ Devolución','💼 Otros'];
-  cats.forEach(c => sel.add(new Option(c, c)));
-  document.getElementById('teclado').classList.remove('hide');
-}
-function cancelar() { document.getElementById('teclado').classList.add('hide'); }
-function n(v) { if (v === 'c') { monto = '0'; } else { monto = monto === '0' ? v : monto + v; } document.getElementById('amount').textContent = '$' + monto; }
-async function guardar() {
-  const fila = {
-    Fecha: new Date().toISOString(),
-    Tipo: modo === 'gasto' ? 'gasto' : 'ingreso',
-    Cat: document.getElementById('cat').value,
-    Subcat: '',
-    Monto: parseFloat(monto).toFixed(2),
-    Divisa: 'MXN',
-    CtaOrigen: '',
-    CtaDestino: '',
-    Nota: '',
-    UUID: self.crypto.randomUUID()
-  };
-  await fetch(SCRIPT_URL, {
-    method: 'POST',
-    body: new URLSearchParams({ action: 'write', row: JSON.stringify(fila) })
-  });
-  cancelar();
-  await cargar();
-  actualizarSemaforo();
-}
-</script>
-</body>
-</html>
+  datos = await r.json() || [];
+  const ing = datos.filter(x=>x.Tipo==='ingreso').reduce((a,x)=>a+parseFloat(x.Monto),0);
+  const gas = datos.filter(x=>x.Tipo==='gasto').reduce((a,x)=>a+parseFloat(x.Monto),0);
+  document.getElementById('
