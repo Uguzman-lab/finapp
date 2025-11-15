@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>FinApp</title>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<style>
+body{font-family:-apple-system,BlinkMacSystemFont;margin:0;background:#000;color:#0f0;display:flex;flex-direction:column;height:100vh}
+header{display:flex;justify-content:space-between;padding:10px}
+#sem{width:70px;height:70px;border-radius:50%;border:3px solid #0ff;margin:auto}
+.verde{background:#0f0}.ambar{background:#ff0}.rojo{background:#f00}
+.btn{font-size:1.8rem;padding:10px 20px;border:2px solid #0ff;background:transparent;color:#0ff;border-radius:10px;margin:8px}
+.num{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:8px}
+.num button{font-size:1.6rem;padding:18px;background:#222;color:#0f0;border:none}
+#amount{font-size:2rem;text-align:center;margin:6px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<header><span id="saldo">$0.00</span><span id="fecha"></span></header>
+<main>
+<div id="sem" class="rojo"></div>
+<h2 id="statusText">Cargando…</h2>
+<div style="display:flex;justify-content:center">
+<button class="btn" onclick="quick('gasto')">- Gasto</button>
+<button class="btn" onclick="quick('ingreso')">+ Ingreso</button>
+</div>
+<div id="teclado" class="hide">
+<div id="amount">$0</div>
+<div class="num">
+<button onclick="n('1')">1</button><button onclick="n('2')">2</button><button onclick="n('3')">3</button>
+<button onclick="n('4')">4</button><button onclick="n('5')">5</button><button onclick="n('6')">6</button>
+<button onclick="n('7')">7</button><button onclick="n('8')">8</button><button onclick="n('9')">9</button>
+<button onclick="n('c')">C</button><button onclick="n('0')">0</button><button onclick="n('.')">.</button>
+</div>
+<select id="cat"></select>
+<button class="btn" onclick="guardar()">Guardar</button>
+<button class="btn" onclick="cancelar()">Cancelar</button>
+</div>
+</main>
+<script>
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz88_Sg6VGhu-5zf_yh3Mm58GSi3ygrAarWlDIS2QU13dPd-u82pij2U_La4Hr6lxp0hQ/exec'; // << PASO 2.5: cambia sólo esta por tu URL
+let modo = '', monto = '0', datos = [];
+
+window.onload = async () => {
+  document.getElementById('fecha').textContent = new Date().toLocaleDateString('es-MX');
+  await cargar();
+  actualizarSemaforo();
+};
+
+async function cargar(){
+  const r = await fetch(SCRIPT_URL + '?action=read');
+  datos = await r.json();
+  const ing = datos.filter(x => x.Tipo === 'ingreso').reduce((a, x) => a + parseFloat(x.Monto), 0);
+  const gas = datos.filter(x => x.Tipo === 'gasto').reduce((a, x) => a + parseFloat(x.Monto), 0);
+  document.getElementById('saldo').textContent = '$' + (ing - gas).toFixed(2);
+}
+
+function actualizarSemaforo(){
+  const ing = datos.filter(x => x.Tipo === 'ingreso' && esteMes(x.Fecha)).reduce((a, x) => a + parseFloat(x.Monto), 0);
+  const gas = datos.filter(x => x.Tipo === 'gasto' && esteMes(x.Fecha)).reduce((a, x) => a + parseFloat(x.Monto), 0);
+  const el = document.getElementById('sem'); el.className = '';
+  if (gas < ing * 0.8) { el.classList.add('verde'); document.getElementById('statusText').textContent = 'Saludable'; }
+  else if (gas < ing * 0.95) { el.classList.add('ambar'); document.getElementById('statusText').textContent = 'Cuidado'; }
+  else { el.classList.add('rojo'); document.getElementById('statusText').textContent = 'Crítico'; }
+}
+function esteMes(f) { const d = new Date(f); const hoy = new Date(); return d.getMonth() === hoy.getMonth() && d.getFullYear() === hoy.getFullYear(); }
+
+function quick(t) {
+  modo = t; monto = '0'; document.getElementById('amount').textContent = '$0';
+  const sel = document.getElementById('cat'); sel.innerHTML = '';
+  const cats = t === 'gasto' ? ['🍔 Alimentos','🚗 Transporte','🏠 Casa','🎉 Salidas','💊 Salud','📱 Tecnología','🛍️ Otros']
+                             : ['💰 Nómina','🎁 Regalo','📈 Intereses','↩️ Devolución','💼 Otros'];
+  cats.forEach(c => sel.add(new Option(c, c)));
+  document.getElementById('teclado').classList.remove('hide');
+}
+function cancelar() { document.getElementById('teclado').classList.add('hide'); }
+function n(v) { if (v === 'c') { monto = '0'; } else { monto = monto === '0' ? v : monto + v; } document.getElementById('amount').textContent = '$' + monto; }
+async function guardar() {
+  const fila = {
+    Fecha: new Date().toISOString(),
+    Tipo: modo === 'gasto' ? 'gasto' : 'ingreso',
+    Cat: document.getElementById('cat').value,
+    Subcat: '',
+    Monto: parseFloat(monto).toFixed(2),
+    Divisa: 'MXN',
+    CtaOrigen: '',
+    CtaDestino: '',
+    Nota: '',
+    UUID: self.crypto.randomUUID()
+  };
+  await fetch(SCRIPT_URL, {
+    method: 'POST',
+    body: new URLSearchParams({ action: 'write', row: JSON.stringify(fila) })
+  });
+  cancelar();
+  await cargar();
+  actualizarSemaforo();
+}
+</script>
+</body>
+</html>
