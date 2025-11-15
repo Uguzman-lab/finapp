@@ -9,17 +9,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💰</text></svg>"/>
 <script src="https://unpkg.com/tesseract.js@4/dist/tesseract.min.js"></script>
 <style>
-:root{
-  --bg:#f4f6fa;
-  --card:#ffffff;
-  --primary:#3478f6;
-  --green:#34c759;
-  --yellow:#ffcc00;
-  --red:#ff3b30;
-  --text:#1c1c1e;
-  --text-light:#8e8e93;
-  --shadow:0 2px 12px rgba(0,0,0,.08);
-}
+:root{--bg:#f4f6fa;--card:#ffffff;--primary:#3478f6;--green:#34c759;--yellow:#ffcc00;--red:#ff3b30;--text:#1c1c1e;--text-light:#8e8e93;--shadow:0 2px 12px rgba(0,0,0,.08);}
 *{box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;}
 body{margin:0;background:var(--bg);color:var(--text);display:flex;flex-direction:column;height:100vh;-webkit-user-select:none;}
 header{background:var(--card);box-shadow:var(--shadow);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;font-size:17px;font-weight:600;}
@@ -47,7 +37,6 @@ select{width:100%;font-size:16px;padding:10px;border-radius:10px;border:1px soli
 ul{list-style:none;padding:0;margin:0;}
 li{padding:10px;border-bottom:1px solid #e5e5ea;font-size:15px;display:flex;justify-content:space-between;}
 li:last-child{border:none;}
-/* botones grandes */
 .btn-xl{font-size:22px;padding:16px;border-radius:14px;width:100%;margin-bottom:10px;}
 </style>
 </head>
@@ -59,64 +48,34 @@ li:last-child{border:none;}
 </header>
 
 <main id="vista">
-  <!-- 1. CUADRO SALUD -->
-  <div class="card" style="text-align:center">
-    <div id="sem"></div>
-    <div id="statusText" style="font-size:18px;font-weight:500">Sin actualizaciones</div>
-  </div>
-
-  <!-- 2. PRODUCTOS (RESUMEN RÁPIDO) -->
-  <div class="card">
-    <div class="grid" id="productos"></div>
-    <button class="btn-prim btn-xl" onclick="editarProductos()">+ Añadir / Editar productos</button>
-  </div>
-
-  <!-- 3. PRÓXIMOS 5 DÍAS -->
-  <div class="card">
-    <div style="font-size:17px;font-weight:600;margin-bottom:8px">Próximos 5 días</div>
-    <ul id="proxPagos"></ul>
-    <div id="noProx" style="color:var(--text-light);font-size:14px">Nada programado</div>
-  </div>
-
-  <!-- 4. BOTONES PRINCIPALES -->
+  <div class="card" style="text-align:center"><div id="sem"></div><div id="statusText" style="font-size:18px;font-weight:500">Sin actualizaciones</div></div>
+  <div class="card"><div class="grid" id="productos"></div><button class="btn-prim btn-xl" onclick="editarProductos()">+ Añadir / Editar productos</button></div>
+  <div class="card"><div style="font-size:17px;font-weight:600;margin-bottom:8px">Próximos 5 días</div><ul id="proxPagos"></ul><div id="noProx" style="color:var(--text-light);font-size:14px">Nada programado</div></div>
   <div class="grid">
     <button class="btn-prim btn-xl" onclick="quick('gasto')">- Gasto</button>
     <button class="btn-prim btn-xl" onclick="quick('ingreso')">+ Ingreso</button>
     <button class="btn-sec btn-xl" onclick="fotoRecibo()">📷 Recibo / Galería</button>
     <button class="btn-sec btn-xl" onclick="verResumen()">📋 Resumen</button>
   </div>
-
-  <!-- 5. TECLADO NUMÉRICO / FORM -->
-  <div id="teclado" class="hide card">
-    <div id="amount">$0</div>
-    <div class="num">
-      <button onclick="n('1')">1</button><button onclick="n('2')">2</button><button onclick="n('3')">3</button>
-      <button onclick="n('4')">4</button><button onclick="n('5')">5</button><button onclick="n('6')">6</button>
-      <button onclick="n('7')">7</button><button onclick="n('8')">8</button><button onclick="n('9')">9</button>
-      <button onclick="n('c')">C</button><button onclick="n('0')">0</button><button onclick="n('.')">.</button>
-    </div>
+  <div id="teclado" class="hide card"><div id="amount">$0</div><div class="num">
+    <button onclick="n('1')">1</button><button onclick="n('2')">2</button><button onclick="n('3')">3</button>
+    <button onclick="n('4')">4</button><button onclick="n('5')">5</button><button onclick="n('6')">6</button>
+    <button onclick="n('7')">7</button><button onclick="n('8')">8</button><button onclick="n('9')">9</button>
+    <button onclick="n('c')">C</button><button onclick="n('0')">0</button><button onclick="n('.')">.</button>
+  </div>
     <select id="cat"></select>
-    <select id="medio">
-      <option value="">Medio (opcional)</option>
-      <option>Tarjeta-crédito</option><option>Débito</option><option>Cripto</option><option>Inversiones</option><option>Terrenos</option>
-    </select>
-    <div style="display:flex;gap:8px">
-      <button class="btn-prim" style="flex:1" onclick="guardar()">Guardar</button>
-      <button class="btn-sec" style="flex:1" onclick="cancelar()">Cancelar</button>
-    </div>
+    <select id="medio"><option value="">Medio (opcional)</option><option>Tarjeta-crédito</option><option>Débito</option><option>Cripto</option><option>Inversiones</option><option>Terrenos</option></select>
+    <div style="display:flex;gap:8px"><button class="btn-prim" style="flex:1" onclick="guardar()">Guardar</button><button class="btn-sec" style="flex:1" onclick="cancelar()">Cancelar</button></div>
   </div>
 </main>
 
-<!-- 6. BARRA INFERIOR -->
 <footer class="bot-bar">
-  <button onclick="location.reload()">🏠</button>
-  <button onclick="verResumen()">📋</button>
-  <button onclick="alert('Pronto más herramientas')">⚙️</button>
+  <button onclick="location.reload()">🏠</button><button onclick="verResumen()">📋</button><button onclick="alert('Pronto más herramientas')">⚙️</button>
 </footer>
 
 <script>
 const medios = ['Tarjeta-crédito','Débito','Cripto','Inversiones','Terrenos'];
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz88_Sg6VGhu-5zf_yh3Mm58GSi3ygrAarWlDIS2QU13dPd-u82pij2U_La4Hr6lxp0hQ/exec'; // ← tu URL
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz88_Sg6VGhu-5zf_yh3Mm58GSi3ygrAarWlDIS2QU13dPd-u82pij2U_La4Hr6lxp0hQ/exec'; // tu URL
 let modo = '', monto = '0', datos = [], productos = [];
 
 window.onload = async () => {
@@ -149,110 +108,50 @@ function actualizarSemaforo(){
 }
 function esteMes(f){const d=new Date(f);const hoy=new Date();return d.getMonth()===hoy.getMonth()&&d.getFullYear()===hoy.getFullYear();}
 
-/* ---------- PRODUCTOS ---------- */
 function pintarProductos(){
-  const div = document.getElementById('productos');
-  div.innerHTML = '';
+  const div=document.getElementById('productos');
+  div.innerHTML='';
   medios.forEach(m=>{
-    const ing = datos.filter(x=>x.Tipo==='ingreso'&&(x.CtaOrigen===m||x.CtaDestino===m)).reduce((a,x)=>a+parseFloat(x.Monto||0),0);
-    const gas = datos.filter(x=>x.Tipo==='gasto'  &&(x.CtaOrigen===m||x.CtaDestino===m)).reduce((a,x)=>a+parseFloat(x.Monto||0),0);
-    const saldo = ing - gas;
-    const icons = {'Tarjeta-crédito':'💳','Débito':'💰','Cripto':'₿','Inversiones':'📈','Terrenos':'🏡'};
-    div.innerHTML += `
-      <div class="prod">
-        <div class="prod-icon">${icons[m]||'📊'}</div>
-        <div class="prod-name">${m}</div>
-        <div class="prod-amt">$${saldo.toFixed(2)}</div>
-      </div>`;
+    const ing=datos.filter(x=>x.Tipo==='ingreso'&&(x.CtaOrigen===m||x.CtaDestino===m)).reduce((a,x)=>a+parseFloat(x.Monto||0),0);
+    const gas=datos.filter(x=>x.Tipo==='gasto'  &&(x.CtaOrigen===m||x.CtaDestino===m)).reduce((a,x)=>a+parseFloat(x.Monto||0),0);
+    const saldo=ing-gas;
+    const icons={'Tarjeta-crédito':'💳','Débito':'💰','Cripto':'₿','Inversiones':'📈','Terrenos':'🏡'};
+    div.innerHTML+=`<div class="prod"><div class="prod-icon">${icons[m]||'📊'}</div><div class="prod-name">${m}</div><div class="prod-amt">$${saldo.toFixed(2)}</div></div>`;
   });
 }
-function editarProductos(){alert('Pronto editor de productos');}
+function editarProductos(){alert('…Pronto editor de productos');}
 
-/* ---------- PRÓXIMOS 5 DÍAS ---------- */
 function proximos5dias(){
-  const hoy = new Date();
-  const max = new Date(hoy); max.setDate(hoy.getDate()+5);
-  const prox = datos.filter(x=>{
-    const fx = new Date(x.Fecha);
-    return fx>=hoy && fx…<= cortado anteriormente – continuamos desde la línea rota -->
-
-```javascript
-    return fx>=hoy && fx<=max && (x.Tipo==='suscripción'||x.Tipo==='tarjeta-corte'||x.Tipo==='tarjeta-pago');
-  }).sort((a,b)=>new Date(a.Fecha)-new Date(b.Fecha));
-
-  const ul=document.getElementById('proxPagos');
-  const no=document.getElementById('noProx');
-  if(prox.length){
-    no.style.display='none';
-    ul.innerHTML=prox.map(x=>`<li>${x.Fecha.slice(0,10)} – ${x.Cat} ($${x.Monto})</li>`).join('');
-  }else{
-    no.style.display='block';
-    ul.innerHTML='';
-  }
+  const hoy=new Date();const max=new Date(hoy);max.setDate(hoy.getDate()+5);
+  const prox=datos.filter(x=>{const fx=new Date(x.Fecha);return fx>=hoy&&fx<=max&&(x.Tipo==='suscripción'||x.Tipo==='tarjeta-corte'||x.Tipo==='tarjeta-pago');}).sort((a,b)=>new Date(a.Fecha)-new Date(b.Fecha));
+  const ul=document.getElementById('proxPagos');const no=document.getElementById('noProx');
+  if(prox.length){no.style.display='none';ul.innerHTML=prox.map(x=>`<li>${x.Fecha.slice(0,10)} – ${x.Cat} ($${x.Monto})</li>`).join('');}else{no.style.display='block';ul.innerHTML='';}
 }
 
-/* ---------- FOTO / GALERÍA ---------- */
 function fotoRecibo(){
-  const inp=document.createElement('input');
-  inp.type='file'; inp.accept='image/*';
-  inp.onchange=async e=>{
-    const file=e.target.files[0];
-    if(!file)return;
-    const txt=await OCR(file);
-    const nums=txt.match(/\d+\.\d{2}|\d+/g);
-    if(nums&&nums.length){monto=nums.pop(); quick('gasto'); document.getElementById('amount').textContent='$'+monto;}
-    else{alert('No encontré monto claro');}
-  }; inp.click();
+  const inp=document.createElement('input');inp.type='file';inp.accept='image/*';
+  inp.onchange=async e=>{const file=e.target.files[0];if(!file)return;const txt=await OCR(file);const nums=txt.match(/\d+\.\d{2}|\d+/g);if(nums&&nums.length){monto=nums.pop();quick('gasto');document.getElementById('amount').textContent='$'+monto;}else{alert('No encontré monto claro');}};inp.click();
 }
-async function OCR(file){
-  const {createWorker}=Tesseract;
-  const worker=await createWorker('spa');
-  const ret=await worker.recognize(file);
-  await worker.terminate();
-  return ret.data.text;
-}
+async function OCR(file){const{createWorker}=Tesseract;const worker=await createWorker('spa');const ret=await worker.recognize(file);await worker.terminate();return ret.data.text;}
 
-/* ---------- FORMULARIO RÁPIDO ---------- */
 function quick(t){
-  modo=t; monto='0'; document.getElementById('amount').textContent='$0';
-  const sel=document.getElementById('cat'); sel.innerHTML='';
-  const cats=t==='gasto'?['🍔 Alimentos','🚗 Transporte','🏠 Casa','🎉 Salidas','💊 Salud','📱 Tecnología','🛍️ Otros']
-                       :['💰 Nómina','🎁 Regalo','📈 Intereses','↩️ Devolución','💼 Otros'];
-  cats.forEach(c=>sel.add(new Option(c,c)));
-  document.getElementById('teclado').classList.remove('hide');
+  modo=t;monto='0';document.getElementById('amount').textContent='$0';const sel=document.getElementById('cat');sel.innerHTML='';
+  const cats=t==='gasto'?['🍔 Alimentos','🚗 Transporte','🏠 Casa','🎉 Salidas','💊 Salud','📱 Tecnología','🛍️ Otros']:['💰 Nómina','🎁 Regalo','📈 Intereses','↩️ Devolución','💼 Otros'];
+  cats.forEach(c=>sel.add(new Option(c,c)));document.getElementById('teclado').classList.remove('hide');
 }
 function cancelar(){document.getElementById('teclado').classList.add('hide');}
 function n(v){if(v==='c'){monto='0';}else{monto=monto==='0'?v:monto+v;}document.getElementById('amount').textContent='$'+monto;}
 async function guardar(){
-  const fila={
-    Fecha:new Date().toISOString(),Tipo:modo==='gasto'?'gasto':'ingreso',Cat:document.getElementById('cat').value,Subcat:'',
-    Monto:parseFloat(monto).toFixed(2),Divisa:'MXN',
-    CtaOrigen:document.getElementById('medio').value||'Débito',CtaDestino:'',Nota:'',UUID:self.crypto.randomUUID()
-  };
+  const fila={Fecha:new Date().toISOString(),Tipo:modo==='gasto'?'gasto':'ingreso',Cat:document.getElementById('cat').value,Subcat:'',Monto:parseFloat(monto).toFixed(2),Divisa:'MXN',CtaOrigen:document.getElementById('medio').value||'Débito',CtaDestino:'',Nota:'',UUID:self.crypto.randomUUID()};
   await fetch(SCRIPT_URL,{method:'POST',body:new URLSearchParams({action:'write',row:JSON.stringify(fila)})});
-  cancelar();
-  /* recargar vista */
-  await cargar(); actualizarSemaforo(); pintarProductos(); proximos5dias();
+  cancelar();await cargar();actualizarSemaforo();pintarProductos();proximos5dias();
 }
-
-/* ---------- RESUMEN / FILTRO ---------- */
 function verResumen(){
-  let html=`<h2>Resumen de movimientos</h2>
-  <select id="filtroMedio" onchange="filtraResumen()">
-    <option value="">Todos los medios</option>`;
-  medios.forEach(m=>html+=`<option value="${m}">${m}</option>`);
-  html+=`</select><ul id="listaMov">Cargando…</ul>
-  <button class="btn-sec btn-xl" onclick="cierraResumen()">Cerrar</button>`;
-  document.getElementById('vista').innerHTML=html;
-  filtraResumen();
+  let html=`<h2>Resumen de movimientos</h2><select id="filtroMedio" onchange="filtraResumen()"><option value="">Todos los medios</option>`;
+  medios.forEach(m=>html+=`<option value="${m}">${m}</option>`);html+=`</select><ul id="listaMov">Cargando…</ul><button class="btn-sec btn-xl" onclick="cierraResumen()">Cerrar</button>`;
+  document.getElementById('vista').innerHTML=html;filtraResumen();
 }
-function filtraResumen(){
-  const medio=document.getElementById('filtroMedio').value;
-  let fil=datos;
-  if(medio)fil=datos.filter(x=>(x.CtaOrigen===medio||x.CtaDestino===medio));
-  const lista=document.getElementById('listaMov');
-  lista.innerHTML=fil.map(x=>`<li>${x.Fecha.slice(0,10)} – ${x.Cat} – $${x.Monto} (${x.Tipo})</li>`).join('');
-}
+function filtraResumen(){const medio=document.getElementById('filtroMedio').value;let fil=datos;if(medio)fil=datos.filter(x=>(x.CtaOrigen===medio||x.CtaDestino===medio));const lista=document.getElementById('listaMov');lista.innerHTML=fil.map(x=>`<li>${x.Fecha.slice(0,10)} – ${x.Cat} – $${x.Monto} (${x.Tipo})</li>`).join('');}
 function cierraResumen(){window.location.reload();}
 </script>
 </body>
